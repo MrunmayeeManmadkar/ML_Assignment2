@@ -1,86 +1,453 @@
-# Classification Comparison Lab — Learning Reference
 
-> **Academic integrity:** This is an educational reference project, not a finished student submission. Run it in the BITS Virtual Lab, review the implementation, document and commit your own experiments, personalize the interface and observations, and use only verified links/screenshots in your PDF.
+# Classification Comparison Lab
 
-## a. Problem statement
+### Machine Learning — Assignment 2
+**BITS Pilani | M.Tech in Artificial Intelligence and Machine Learning**
 
-Compare five supervised classification algorithms on one publicly available binary dataset using a consistent hold-out evaluation procedure, then provide an interactive application that evaluates uploaded labeled test data with already-trained models.
+## 1. Problem Statement
 
-## b. Dataset description
+The objective of this project is to implement and compare five supervised machine learning classification algorithms on a publicly available binary classification dataset.
 
-- Dataset: Wisconsin Diagnostic Breast Cancer (WDBC)
-- Original source: UCI Machine Learning Repository — https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic
-- Access method: `sklearn.datasets.load_breast_cancer`, which packages the UCI dataset
-- Samples: 569; predictor columns: 30; outcome classes: benign and malignant
-- Target coding used here: 0 = benign; 1 = malignant
-- Split: stratified 80% training / 20% test, `random_state=42`
-- Preprocessing: standardization within Logistic Regression, KNN and SVM pipelines; tree and Gaussian NB use unscaled inputs. Pipelines are fitted only on the training split.
-- **Your action:** Explain why you chose this dataset and examine the real class distribution in your BITS Lab run.
+All models are trained and evaluated using a consistent stratified train-test split. Their performance is compared using six evaluation metrics:
 
-## c. GitHub repository link
+- Accuracy
+- Area Under the ROC Curve (AUC)
+- Precision
+- Recall
+- F1 Score
+- Matthews Correlation Coefficient (MCC)
 
-https://github.com/MrunmayeeManmadkar/ML_Assignment2
+An interactive web application is developed using Streamlit to allow users to upload labeled test datasets, select trained models, view evaluation results, visualize confusion matrices, and compare all five classifiers.
 
-## d. Models used and comparison table
+The application loads previously trained models and performs predictions without retraining.
 
-1. Logistic Regression — standardized linear classifier.
-2. Decision Tree — depth-constrained tree classifier.
-3. K-Nearest Neighbors — distance-based classification on standardized features.
-4. Gaussian Naive Bayes — conditional Gaussian feature likelihoods.
-5. Support Vector Machine — RBF SVC with probability estimates.
+---
 
-Run `python train_models.py` in BITS Virtual Lab. The actual numerical results are in `comparison_metrics.csv`. Copy the verified table into this section and into your final PDF; do not fabricate metrics.
+## 2. Dataset Description
+
+**Dataset:** Wisconsin Diagnostic Breast Cancer (WDBC)
+
+**Source:** UCI Machine Learning Repository
+
+**Dataset URL:** https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic
+
+**Access Method:** `sklearn.datasets.load_breast_cancer`
+
+### Dataset Characteristics
+
+| Property | Description |
+|---|---|
+| Total Samples | 569 |
+| Input Features | 30 |
+| Target Variable | Diagnosis |
+| Classification Type | Binary Classification |
+| Benign Samples | 357 |
+| Malignant Samples | 212 |
+| Training Split | 80% |
+| Testing Split | 20% |
+| Random State | 42 |
+| Stratification | Enabled |
+
+### Target Variable
+
+The project uses the following target encoding:
+
+- **0 — Benign**
+- **1 — Malignant**
+
+The original scikit-learn dataset uses the opposite encoding. The labels are converted so that malignant cases represent the positive class for evaluation.
+
+### Why This Dataset Was Selected
+
+The Wisconsin Diagnostic Breast Cancer dataset was selected because:
+
+1. It is a publicly available and widely used benchmark for binary classification.
+2. It contains numerical features suitable for comparing different machine learning algorithms.
+3. It provides a meaningful real-world classification problem.
+4. It allows comparison of linear, nonlinear, distance-based, probabilistic, and tree-based classifiers.
+5. The unequal class distribution makes evaluation metrics such as recall, F1 score, and MCC particularly relevant.
+
+The dataset contains 357 benign samples and 212 malignant samples.
+
+A stratified split is used to preserve approximately the same class proportions in the training and testing datasets.
+
+---
+
+## 3. Data Preprocessing
+
+The dataset is divided into training and testing subsets using:
+
+- Training data: 80%
+- Testing data: 20%
+- Random state: 42
+- Stratification: Based on target labels
+
+### Feature Scaling
+
+StandardScaler is applied to algorithms that are sensitive to feature magnitude.
+
+| Algorithm | Standardization |
+|---|---|
+| Logistic Regression | Yes |
+| Decision Tree | No |
+| K-Nearest Neighbors | Yes |
+| Gaussian Naive Bayes | No |
+| Support Vector Machine | Yes |
+
+For Logistic Regression, KNN, and SVM, standardization is incorporated into scikit-learn pipelines.
+
+The pipelines are fitted only on the training dataset, preventing information leakage from the held-out test data.
+
+Decision Tree and Gaussian Naive Bayes use the original unscaled numerical features.
+
+---
+
+## 4. Machine Learning Models Implemented
+
+Five supervised classification algorithms are implemented.
+
+### 4.1 Logistic Regression
+
+Logistic Regression is a linear classification algorithm that estimates the probability of a sample belonging to a particular class.
+
+Standardized features are used to support stable optimization.
+
+### 4.2 Decision Tree
+
+Decision Tree classifies samples using a sequence of feature-based decision rules.
+
+The tree uses a maximum depth of 5 to restrict model complexity and help reduce overfitting.
+
+### 4.3 K-Nearest Neighbors (KNN)
+
+KNN is a distance-based classification algorithm.
+
+It predicts the class of a sample based on the classes of its nearest neighbors.
+
+Feature standardization is performed because distance calculations are affected by differences in feature scales.
+
+### 4.4 Gaussian Naive Bayes
+
+Gaussian Naive Bayes is a probabilistic classifier based on Bayes' theorem.
+
+It assumes that features are conditionally independent given the class and that individual feature values follow Gaussian distributions within each class.
+
+### 4.5 Support Vector Machine (SVM)
+
+Support Vector Machine identifies a decision boundary that separates classes.
+
+An RBF kernel is used to support nonlinear classification.
+
+Probability estimates are enabled to calculate ROC-AUC.
+
+---
+
+## 5. Model Evaluation Metrics
+
+The following six metrics are used to evaluate classification performance.
+
+### Accuracy
+
+Measures the proportion of correctly classified samples.
+
+`Accuracy = (TP + TN) / (TP + TN + FP + FN)`
+
+### AUC
+
+Area Under the Receiver Operating Characteristic Curve measures the ability of a classifier to rank positive samples above negative samples across classification thresholds.
+
+A higher AUC indicates better discrimination.
+
+### Precision
+
+Measures the proportion of predicted malignant cases that are actually malignant.
+
+`Precision = TP / (TP + FP)`
+
+### Recall
+
+Measures the proportion of actual malignant cases correctly identified.
+
+`Recall = TP / (TP + FN)`
+
+Recall is especially important in this dataset because false negatives correspond to missed malignant cases.
+
+### F1 Score
+
+The harmonic mean of precision and recall.
+
+`F1 = 2 * (Precision * Recall) / (Precision + Recall)`
+
+### Matthews Correlation Coefficient (MCC)
+
+MCC measures the correlation between predicted and actual classifications using all four confusion-matrix outcomes.
+
+`MCC = (TP * TN - FP * FN) / sqrt((TP + FP)(TP + FN)(TN + FP)(TN + FN))`
+
+MCC is useful when class distributions are unequal.
+
+All precision, recall, and F1 values are calculated with the malignant class as the positive class.
+
+---
+
+## 6. Model Performance Comparison
+
+The following results were obtained from the held-out labeled test dataset.
 
 | ML Model | Accuracy | AUC | Precision | Recall | F1 | MCC |
 |---|---:|---:|---:|---:|---:|---:|
-| Logistic Regression | fill from run | | | | | |
-| Decision Tree | fill from run | | | | | |
-| KNN | fill from run | | | | | |
-| Gaussian Naive Bayes | fill from run | | | | | |
-| Support Vector Machine | fill from run | | | | | |
+| Logistic Regression | 0.9649 | **0.9960** | 0.9750 | 0.9286 | 0.9512 | 0.9245 |
+| Decision Tree | 0.9211 | 0.9448 | 0.9459 | 0.8333 | 0.8861 | 0.8299 |
+| KNN | 0.9561 | 0.9823 | 0.9744 | 0.9048 | 0.9383 | 0.9058 |
+| Gaussian Naive Bayes | 0.9386 | 0.9934 | **1.0000** | 0.8333 | 0.9091 | 0.8715 |
+| **Support Vector Machine** | **0.9737** | 0.9947 | **1.0000** | **0.9286** | **0.9630** | **0.9442** |
 
-### Observations (complete from verified results)
+### Performance Highlights
 
-| Model | Your observation |
+- **Highest Accuracy:** Support Vector Machine — 97.37%
+- **Highest AUC:** Logistic Regression — 0.9960
+- **Highest Precision:** SVM and Gaussian Naive Bayes — 1.0000
+- **Highest Recall:** SVM and Logistic Regression — 0.9286
+- **Highest F1 Score:** SVM — 0.9630
+- **Highest MCC:** SVM — 0.9442
+
+---
+
+## 7. Model-wise Observations
+
+### Logistic Regression
+
+Logistic Regression achieved an accuracy of 96.49% and the highest AUC of 0.9960.
+
+Its F1 score of 0.9512 indicates a strong balance between precision and recall.
+
+The results suggest that the standardized dataset supports effective linear classification.
+
+### Decision Tree
+
+Decision Tree achieved an accuracy of 92.11% and an F1 score of 0.8861.
+
+It recorded the lowest recall of 0.8333, indicating that it missed more malignant cases than the leading models.
+
+The maximum depth constraint of 5 helps limit model complexity, although the resulting test performance was lower than that of the other classifiers.
+
+### K-Nearest Neighbors
+
+KNN achieved an accuracy of 95.61% and an F1 score of 0.9383.
+
+Feature standardization is particularly important because KNN relies on distance calculations.
+
+KNN performed competitively but obtained slightly lower scores than Logistic Regression and SVM.
+
+### Gaussian Naive Bayes
+
+Gaussian Naive Bayes achieved an accuracy of 93.86% and an AUC of 0.9934.
+
+It obtained perfect precision of 1.0000, meaning that none of its malignant predictions were false positives on this test set.
+
+However, recall was 0.8333, indicating that some actual malignant cases were classified as benign.
+
+Its conditional independence assumption may limit its ability to model relationships between correlated features.
+
+### Support Vector Machine
+
+SVM achieved the highest accuracy of 97.37%, F1 score of 0.9630, and MCC of 0.9442.
+
+It also achieved perfect precision of 1.0000 and recall of 0.9286.
+
+The RBF kernel allows nonlinear decision boundaries and produced the strongest overall results under the selected F1 and MCC criteria.
+
+---
+
+## 8. Overall Model Comparison
+
+Support Vector Machine emerged as the best overall classifier based on F1 score and Matthews Correlation Coefficient.
+
+SVM achieved:
+
+- Accuracy: 0.9737
+- AUC: 0.9947
+- Precision: 1.0000
+- Recall: 0.9286
+- F1 Score: 0.9630
+- MCC: 0.9442
+
+Logistic Regression achieved a slightly higher AUC of 0.9960 compared with SVM's 0.9947.
+
+Both Logistic Regression and SVM achieved the highest malignant-class recall of 0.9286.
+
+Since missing malignant cases is an important concern in this classification problem, recall is considered alongside F1 and MCC rather than relying only on accuracy.
+
+**Selected Best Overall Model: Support Vector Machine (SVM)**
+
+This selection is based on its highest F1 score and MCC, together with its strong malignant-class recall.
+
+---
+
+## 9. Interactive Streamlit Application
+
+An interactive application is developed using Streamlit to evaluate labeled test datasets with already-trained classification models.
+
+### Application Features
+
+**1. Upload Test Dataset**
+
+Users can upload a CSV file containing the required input features and true target labels.
+
+**2. Select Classification Model**
+
+Users can choose among:
+
+- Logistic Regression
+- Decision Tree
+- KNN
+- Gaussian Naive Bayes
+- Support Vector Machine
+
+**3. Evaluate Model Performance**
+
+The application calculates six classification metrics for the uploaded labeled dataset.
+
+**4. Confusion Matrix Visualization**
+
+The application displays a confusion matrix to help analyze correct and incorrect classifications.
+
+**5. All-Model Comparison**
+
+Users can compare all five trained classifiers on the same uploaded dataset.
+
+**6. Pretrained Model Loading**
+
+Saved model artifacts are loaded using Joblib.
+
+The application does not retrain models during evaluation.
+
+---
+
+## 10. Project Structure
+
+```text
+ML_Assignment2/
+|
+|-- train_models.py
+|-- app.py
+|-- requirements.txt
+|-- README.md
+|
+|-- test_data.csv
+|-- comparison_metrics.csv
+|
+|-- model/
+|   |-- *.joblib
+|   |-- metadata.json
+|
+|-- .gitignore
+```
+
+### File Descriptions
+
+| File | Purpose |
 |---|---|
-| Logistic Regression | Compare recall and precision; describe possible linear separability. |
-| Decision Tree | Compare train/test behavior and influence of `max_depth=5`. |
-| KNN | Discuss scaling, neighborhood size, and test performance. |
-| Gaussian Naive Bayes | Discuss conditional independence approximation and observed performance. |
-| Support Vector Machine | Discuss its RBF boundary and trade-off among recall, F1 and MCC. |
-| Overall winner | State the criterion you choose (e.g., malignant-class recall or F1), show numerical evidence, and justify it. |
+| `train_models.py` | Loads dataset, trains classifiers, evaluates performance, and saves artifacts |
+| `app.py` | Streamlit application for interactive model evaluation |
+| `requirements.txt` | Python dependencies |
+| `test_data.csv` | Labeled held-out test dataset |
+| `comparison_metrics.csv` | Model comparison results |
+| `model/*.joblib` | Saved trained models and preprocessing pipelines |
+| `model/metadata.json` | Feature names, feature order, and target mapping |
+| `README.md` | Project documentation |
 
-### Evaluation definitions
+---
 
-Accuracy = correct predictions / total. AUC = ROC area using probability scores. Precision, recall and F1 are computed for the **malignant (positive)** class. MCC measures overall prediction-label correlation and accounts for all confusion-matrix cells.
+## 11. Installation and Execution
 
-## Project structure
+### Step 1: Clone the Repository
 
-- `train_models.py` — UCI data loading, stratified split, model training, six-metric evaluation and artifact export
-- `app.py` — test CSV upload, model picker, evaluation, confusion matrix and cross-model comparison
-- `requirements.txt` — required packages
-- `test_data.csv` — held-out labeled test rows generated by the training script
-- `comparison_metrics.csv` — metrics table generated by the training script
-- `model/*.joblib` — saved trained pipelines
-- `model/metadata.json` — feature order and target mapping
+```bash
+git clone https://github.com/MrunmayeeManmadkar/ML_Assignment2.git
+cd ML_Assignment2
+```
 
-## Running and deploying
+### Step 2: Install Dependencies
 
 ```bash
 pip install -r requirements.txt
+```
+
+### Step 3: Train and Evaluate Models
+
+```bash
 python train_models.py
+```
+
+This script:
+
+1. Loads the WDBC dataset.
+2. Prepares the target labels.
+3. Performs a stratified train-test split.
+4. Trains five classification algorithms.
+5. Calculates six evaluation metrics.
+6. Saves trained models.
+7. Exports the held-out test dataset.
+8. Generates the model comparison CSV file.
+
+### Step 4: Launch the Streamlit Application
+
+```bash
 streamlit run app.py
 ```
 
-After verifying everything in the BITS Virtual Lab, create GitHub commits recording meaningful changes, upload the source/model/CSV files, and deploy from https://share.streamlit.io/ using repository `main` and entrypoint `app.py`.
+### Step 5: Evaluate Test Data
 
-**REPLACE AFTER DEPLOYMENT:** `https://YOUR-APP.streamlit.app`
+1. Open the Streamlit application.
+2. Upload `test_data.csv`.
+3. Select a classification model.
+4. View the calculated evaluation metrics.
+5. Examine the confusion matrix.
+6. Open the all-model comparison section to compare all classifiers.
 
-## What to personalize and verify
+---
 
-- Explain the dataset and class distribution in your own words.
-- Try an alternative hyperparameter for at least one model and record the difference.
-- Customize page title, section descriptions and chart or table presentation to make your UI your own.
-- Interpret model outcomes using **your actual** six-metric comparison.
-- Capture one genuine screenshot of assignment execution on BITS Virtual Lab.
-- Confirm the public app successfully accepts `test_data.csv` and returns metrics without retraining.
+## 12. GitHub Repository
+
+**Repository:** https://github.com/MrunmayeeManmadkar/ML_Assignment2
+
+The repository contains the implementation, application code, dependencies, and project documentation.
+
+---
+
+## 13. Streamlit Deployment
+
+The application can be deployed using Streamlit Community Cloud.
+
+**Deployment Platform:** https://share.streamlit.io/
+
+### Deployment Configuration
+
+- Repository: `MrunmayeeManmadkar/ML_Assignment2`
+- Branch: `main`
+- Main application file: `app.py`
+
+The application requires the trained model artifacts and metadata to be available in the deployed repository.
+
+---
+
+## 14. Conclusion
+
+This project successfully compares five supervised machine learning classification algorithms using a consistent evaluation procedure on the Wisconsin Diagnostic Breast Cancer dataset.
+
+The experimental results demonstrate that:
+
+1. SVM achieved the highest accuracy, F1 score, and MCC.
+2. Logistic Regression achieved the highest AUC.
+3. KNN demonstrated competitive classification performance.
+4. Gaussian Naive Bayes achieved perfect precision but comparatively lower recall.
+5. Decision Tree recorded the lowest overall performance among the evaluated models.
+
+SVM was selected as the best overall classifier based on F1 score and MCC.
+
+The Streamlit application provides an interactive interface for evaluating uploaded labeled datasets using saved trained models without retraining.
+
+The project demonstrates supervised classification, preprocessing pipelines, model evaluation, performance comparison, model persistence, and interactive application deployment.
+
+**Note:** The dataset is used for educational machine learning experiments. The trained models are not intended for clinical diagnosis.
